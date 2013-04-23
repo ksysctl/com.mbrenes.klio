@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="1dip" >
+
+    <TextView
+      android:id="@+id/trackName"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentTop="true"
+      android:paddingBottom="1dip"
+      android:text="@string/track_name"
+      android:textColor="#040404"
+      android:textSize="20sp"
+      android:textStyle="bold"
+      android:typeface="sans" />
+
+    <TextView
+      android:id="@+id/trackDetail"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignLeft="@+id/trackName"
+      android:layout_below="@+id/trackName"
+      android:layout_centerHorizontal="true"
+      android:paddingTop="1dp"
+      android:text="@string/track_detail"
+      android:textColor="#343434"
+      android:textSize="11sp" />
+
+    <TextView
+      android:id="@+id/trackDate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignLeft="@+id/trackDetail"
+      android:layout_below="@+id/trackDetail"
+      android:layout_centerHorizontal="true"
+      android:paddingTop="0dp"
+      android:text="@string/track_date"
+      android:textAppearance="?android:attr/textAppearanceSmall"
+      android:textColor="#343434"
+      android:textSize="9sp"
+      android:textStyle="italic" />
+
+</RelativeLayout>

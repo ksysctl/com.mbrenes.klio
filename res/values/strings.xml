@@ -4,4 +4,8 @@
   <string name="app_name">Klio</string>
   <string name="menu_settings">Settings</string>
 
+  <string name="track_name">Track Name</string>
+  <string name="track_detail">Track Detail</string>
+  <string name="track_date">Track Date</string>
+
 </resources>

@@ -5,7 +5,7 @@
     tools:context=".Klio" >
 
     <ListView
-        android:id="@+id/tracks"
+        android:id="@+id/trackView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
     />

@@ -1,6 +1,7 @@
 package com.mbrenes.klio;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,7 +9,7 @@ import android.net.Uri;
 import android.app.Activity;
 import android.view.Menu;
 import android.widget.ListView;
-import android.widget.ArrayAdapter;
+import android.widget.SimpleAdapter;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -20,19 +21,25 @@ public class Klio extends Activity {
 
     private static final String CONFIG = "lastfm.json";
 
-    ArrayList<String> trackList;
-    ArrayAdapter<String> trackAdapter;
-    ListView trackView;
+    private ArrayList<HashMap<String, String>> trackList;
+    private SimpleAdapter trackAdapter;
+    private ListView trackView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_klio);
 
-        // Add list view
-        trackView = (ListView) findViewById(R.id.tracks);
-        trackList = new ArrayList<String>();
-        trackAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, trackList);
+        // Set adapter
+        trackList = new ArrayList<HashMap<String, String>>();
+        trackAdapter = new SimpleAdapter(
+            this,
+            trackList,
+            R.layout.track_item,
+            new String[] {"trackName", "trackDetail", "trackDate"},
+            new int[] {R.id.trackName, R.id.trackDetail, R.id.trackDate}
+        );
+        trackView = (ListView) findViewById(R.id.trackView);
         trackView.setAdapter(trackAdapter);
 
         // Build url from config file
@@ -77,12 +84,38 @@ public class Klio extends Activity {
             // Fetch response when is ready
             int i;
             try {
-                JSONArray tracks = new JSONArray(response.getJSONObject("recenttracks").getString("track"));
+                JSONArray tracks = new JSONArray(
+                    response.getJSONObject("recenttracks").getString("track")
+                );
                 for(i = 0; i < tracks.length(); i++) {
                     JSONObject track = tracks.getJSONObject(i);
+                    HashMap<String, String> map = new HashMap<String, String>();
 
                     // Adding recently tracks listened to the list
-                    trackList.add(track.getString("name"));
+                    map.put("trackName", track.getString("name"));
+
+                    map.put(
+                        "trackDetail",
+                        String.format(
+                            "from %s by %s",
+                            track.getJSONObject("album").getString("#text"),
+                            track.getJSONObject("artist").getString("#text")
+                        )
+                    );
+
+                    if (track.isNull("date")) {
+                        map.put("trackDate", "playing now");
+                    } else {
+                        map.put(
+                            "trackDate",
+                            String.format(
+                                "at %s",
+                                track.getJSONObject("date").getString("#text")
+                            )
+                        );
+                    }
+
+                    trackList.add(map);
                     trackAdapter.notifyDataSetChanged();
                 }
             } catch (JSONException e) {
