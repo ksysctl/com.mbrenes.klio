@@ -15,13 +15,14 @@ public class Config {
     private static final String TAG = "Klio.Config";
 
     public static JSONObject get(Context context, String name) {
-        InputStream stream;
-        String string;
+        InputStream stream = null;
+        JSONObject object = null;
+        AssetManager assetManager = context.getAssets();
+        String string = null;
+
         int size;
         byte[] buffer;
 
-        JSONObject object = null;
-        AssetManager assetManager = context.getAssets();
         try {
             stream = assetManager.open(name);
             size = stream.available();

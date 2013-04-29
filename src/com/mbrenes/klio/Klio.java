@@ -23,12 +23,16 @@ public class Klio extends Activity {
 
     private ArrayList<HashMap<String, String>> trackList;
     private SimpleAdapter trackAdapter;
-    private ListView trackView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_klio);
+
+        ListView trackView = null;
+        Uri.Builder uri = null;
+        JSONObject config = null;
+        String url = null;
 
         // Set adapter
         trackList = new ArrayList<HashMap<String, String>>();
@@ -36,23 +40,30 @@ public class Klio extends Activity {
             this,
             trackList,
             R.layout.track_item,
-            new String[] {"trackName", "trackDetail", "trackDate"},
-            new int[] {R.id.trackName, R.id.trackDetail, R.id.trackDate}
+            new String[] {
+                "trackName",
+                "trackDetail",
+                "trackDate"
+            },
+            new int[] {
+                R.id.trackName,
+                R.id.trackDetail,
+                R.id.trackDate
+            }
         );
         trackView = (ListView) findViewById(R.id.trackView);
         trackView.setAdapter(trackAdapter);
 
         // Build url from config file
-        JSONObject config = Config.get(this, CONFIG);
-        String url = "";
+        config = Config.get(this, CONFIG);
         try {
-            Uri.Builder uri = Uri.parse(config.getString("server")).buildUpon();
+            uri = Uri.parse(config.getString("server")).buildUpon();
             uri.path(config.getString("path"));
             uri.appendQueryParameter("method", "user.getrecenttracks");
             uri.appendQueryParameter("api_key", config.getString("key"));
             uri.appendQueryParameter("user", config.getString("user"));
             uri.appendQueryParameter("format", config.getString("format"));
-            uri.appendQueryParameter("limit", "2");
+            uri.appendQueryParameter("limit", config.getString("limit"));
 
             url = uri.build().toString();
         } catch (JSONException e) {
@@ -82,14 +93,20 @@ public class Klio extends Activity {
         @Override
         protected void onPostExecute(JSONObject response) {
             // Fetch response when is ready
+            JSONArray tracks = null;
+            JSONObject track = null;
+            HashMap<String, String> map = null;
+
             int i;
+
             try {
-                JSONArray tracks = new JSONArray(
+                tracks = new JSONArray(
                     response.getJSONObject("recenttracks").getString("track")
                 );
+
                 for(i = 0; i < tracks.length(); i++) {
-                    JSONObject track = tracks.getJSONObject(i);
-                    HashMap<String, String> map = new HashMap<String, String>();
+                    track = tracks.getJSONObject(i);
+                    map = new HashMap<String, String>();
 
                     // Adding recently tracks listened to the list
                     map.put("trackName", track.getString("name"));

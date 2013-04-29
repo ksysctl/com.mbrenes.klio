@@ -24,27 +24,34 @@ public class Client {
     private static final String USER_AGENT = "Klio/1.0 (Android)";
 
     public static JSONObject doGet(String url) {
+        JSONObject object = null;
+        JSONTokener tokener = null;
+        StringBuilder builder = null;
+        BufferedReader reader = null;
+        HttpResponse response = null;
+        StatusLine statusLine = null;
+        String line = null;
+
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
 
         httpGet.setHeader("User-Agent", USER_AGENT);
         httpGet.setHeader("Accept", "application/json");
 
-        JSONObject object = null;
         try {
-            HttpResponse response = httpClient.execute(httpGet);
-            StatusLine statusLine = response.getStatusLine();
+            response = httpClient.execute(httpGet);
+            statusLine = response.getStatusLine();
 
             if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                BufferedReader reader = new BufferedReader(
+                reader = new BufferedReader(
                     new InputStreamReader(response.getEntity().getContent(), "UTF-8")
                 );
-                StringBuilder builder = new StringBuilder();
 
-                for (String line = null; (line = reader.readLine()) != null;) {
+                builder = new StringBuilder();
+                for (line = null; (line = reader.readLine()) != null;) {
                     builder.append(line);
                 }
-                JSONTokener tokener = new JSONTokener(builder.toString());
+                tokener = new JSONTokener(builder.toString());
 
                 try {
                     object = new JSONObject(tokener);

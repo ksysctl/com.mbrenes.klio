@@ -1,7 +1,8 @@
 {
-    "key":"<api_key>",
-    "user":"<user_name>",
+    "key":"",
+    "user":"",
     "server":"http://ws.audioscrobbler.com",
     "format":"json",
-    "path":"/2.0/"
+    "path":"/2.0/",
+    "limit":"2"
 }
