@@ -17,8 +17,9 @@ public class Config {
     public static JSONObject get(Context context, String name) {
         InputStream stream = null;
         JSONObject object = null;
-        AssetManager assetManager = context.getAssets();
         String string = null;
+
+        AssetManager assetManager = context.getAssets();
 
         int size;
         byte[] buffer;

@@ -1,5 +1,6 @@
 package com.mbrenes.klio;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,7 +26,6 @@ import org.json.JSONArray;
 
 public class Klio extends Activity {
     private static final String TAG = "Klio";
-
     private static final String CONFIG = "lastfm.json";
 
     private ArrayList<HashMap<String, String>> trackList;
@@ -96,7 +96,7 @@ public class Klio extends Activity {
         }
 
         // Request task
-        getScrobbles = new ScrobblesTask();
+        getScrobbles = new ScrobblesTask(this);
         getScrobbles.execute(url);
     }
 
@@ -122,14 +122,21 @@ public class Klio extends Activity {
         }
     }
 
-    public class ScrobblesTask extends AsyncTask<String, Void, JSONObject> {
-        ProgressDialog progressDialog = null;
+    private static class ScrobblesTask extends AsyncTask<String, Void, JSONObject> {
+        private ProgressDialog progressDialog ;
+        private WeakReference<Klio> context;
+
+        public ScrobblesTask(Klio activity) {
+            context = new WeakReference<Klio>(activity);
+        }
 
         @Override
         protected void onPreExecute() {
             // Set progress dialog
-            progressDialog = new ProgressDialog(Klio.this);
-            progressDialog.setMessage(getResources().getString(R.string.progress_message));
+            Klio activity = context.get();
+
+            progressDialog = new ProgressDialog(activity);
+            progressDialog.setMessage(activity.getResources().getString(R.string.progress_message));
             progressDialog.setIndeterminate(false);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setCancelable(true);
@@ -139,15 +146,14 @@ public class Klio extends Activity {
         @Override
         public JSONObject doInBackground(String... urls) {
             // Execute request and wait for response
-            JSONObject response = null;
-
-            response = Client.doGet(urls[0]);
+             JSONObject response = Client.doGet(urls[0]);
             return response;
         }
 
         @Override
         protected void onPostExecute(JSONObject response) {
             // Fetch response when is ready
+            Klio activity = context.get();
             progressDialog.dismiss();
 
             JSONArray tracks = null;
@@ -157,53 +163,55 @@ public class Klio extends Activity {
             int i;
             String message;
 
-            try {
-                tracks = new JSONArray(
-                    response.getJSONObject("recenttracks").getString("track")
-                );
-
-                for(i = 0; i < tracks.length(); i++) {
-                    track = tracks.getJSONObject(i);
-                    map = new HashMap<String, String>();
-
-                    // Adding recently tracks listened to the list
-                    map.put("trackName", track.getString("name"));
-
-                    map.put(
-                        "trackDetail",
-                        String.format(
-                            getResources().getString(R.string.track_detail_format),
-                            track.getJSONObject("album").getString("#text"),
-                            track.getJSONObject("artist").getString("#text")
-                        )
+            if (activity != null && !activity.isFinishing()) {
+                try {
+                    tracks = new JSONArray(
+                        response.getJSONObject("recenttracks").getString("track")
                     );
 
-                    if (track.isNull("date")) {
+                    for(i = 0; i < tracks.length(); i++) {
+                        track = tracks.getJSONObject(i);
+                        map = new HashMap<String, String>();
+
+                        // Adding recently tracks listened to the list
+                        map.put("trackName", track.getString("name"));
+
                         map.put(
-                            "trackDate",
-                            getResources().getString(R.string.track_date_default)
-                        );
-                    } else {
-                        map.put(
-                            "trackDate",
+                            "trackDetail",
                             String.format(
-                                getResources().getString(R.string.track_date_format),
-                                track.getJSONObject("date").getString("#text")
+                                activity.getResources().getString(R.string.track_detail_format),
+                                track.getJSONObject("album").getString("#text"),
+                                track.getJSONObject("artist").getString("#text")
                             )
                         );
+
+                        if (track.isNull("date")) {
+                            map.put(
+                                "trackDate",
+                                activity.getResources().getString(R.string.track_date_default)
+                            );
+                        } else {
+                            map.put(
+                                "trackDate",
+                                String.format(
+                                    activity.getResources().getString(R.string.track_date_format),
+                                    track.getJSONObject("date").getString("#text")
+                                )
+                            );
+                        }
+
+                        activity.trackList.add(map);
+                        activity.trackAdapter.notifyDataSetChanged();
                     }
+                } catch (JSONException e) {
+                    Log.e(TAG, e.toString());
 
-                    trackList.add(map);
-                    trackAdapter.notifyDataSetChanged();
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, e.toString());
-
-                try {
-                    message = response.getString("message");
-                    Toast.makeText(Klio.this, message, Toast.LENGTH_LONG).show();
-                } catch (JSONException error) {
-                    Log.e(TAG, error.toString());
+                    try {
+                        message = response.getString("message");
+                        Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+                    } catch (JSONException error) {
+                        Log.e(TAG, error.toString());
+                    }
                 }
             }
         }

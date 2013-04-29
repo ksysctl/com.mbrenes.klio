@@ -20,7 +20,6 @@ import org.apache.http.StatusLine;
 
 public class Client {
     private static final String TAG = "Klio.Client";
-
     private static final String USER_AGENT = "Klio/1.0 (Android)";
 
     public static JSONObject doGet(String url) {
