@@ -1,8 +1,6 @@
 {
     "key":"",
-    "user":"",
     "server":"http://ws.audioscrobbler.com",
     "format":"json",
-    "path":"/2.0/",
-    "limit":"2"
+    "path":"/2.0/"
 }

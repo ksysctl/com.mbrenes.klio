@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/preferences">
+
+        <EditTextPreference
+            android:key="user"
+            android:title="@string/preferences_user_title"
+            android:summary="@string/preferences_user_summary"
+            android:defaultValue="@string/preferences_user_default"
+            android:singleLine="true"
+            android:lines="1"
+        />
+
+        <ListPreference
+            android:key="limit"
+            android:title="@string/preferences_limit_title"
+            android:summary="@string/preferences_limit_summary"
+            android:defaultValue="@string/preferences_limit_default"
+            android:entries="@array/preferences_limit_entries"
+            android:entryValues="@array/preferences_limit_values"
+        />
+
+    </PreferenceCategory>
+</PreferenceScreen>

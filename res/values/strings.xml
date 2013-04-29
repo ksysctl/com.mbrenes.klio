@@ -4,8 +4,24 @@
   <string name="app_name">Klio</string>
   <string name="menu_settings">Settings</string>
 
+  <string name="preferences">Preferences</string>
+
+  <string name="preferences_limit_title">Tracks to diplay</string>
+  <string name="preferences_limit_summary">Show last scrobbles</string>
+  <string name="preferences_limit_default">10</string>
+
+  <string name="preferences_user_title">Last.fm username</string>
+  <string name="preferences_user_summary">Show last scrobbles for this username</string>
+  <string name="preferences_user_default"></string>
+
   <string name="track_name">Track Name</string>
   <string name="track_detail">Track Detail</string>
   <string name="track_date">Track Date</string>
+
+  <string name="track_date_default">playing now</string>
+  <string name="track_date_format">at %1$s</string>
+  <string name="track_detail_format">from %1$s by %2$s</string>
+
+  <string name="progress_message">Loading &#8230;</string>
 
 </resources>
