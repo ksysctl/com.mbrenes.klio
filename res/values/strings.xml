@@ -24,4 +24,6 @@
 
   <string name="progress_message">Loading &#8230;</string>
 
+  <string name="msg_network_error">Network error</string>
+
 </resources>

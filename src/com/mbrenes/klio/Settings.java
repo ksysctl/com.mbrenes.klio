@@ -14,19 +14,19 @@ public class Settings extends PreferenceActivity {
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            AddResourceOlder();
+            AddResourceOld();
         } else {
-            AddResource();
+            AddResourceNew();
         }
     }
 
     @SuppressWarnings("deprecation")
-    protected void AddResourceOlder() {
+    protected void AddResourceOld() {
         addPreferencesFromResource(preferences);
     }
 
     @TargetApi(11)
-    protected void AddResource() {
+    protected void AddResourceNew() {
         getFragmentManager().beginTransaction().replace(
             android.R.id.content, new SettingsFragment()
         ).commit();

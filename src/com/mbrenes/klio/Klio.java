@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import android.util.Log;
-
 import android.app.ProgressDialog;
 
 import org.json.JSONException;
@@ -146,7 +145,7 @@ public class Klio extends Activity {
         @Override
         public JSONObject doInBackground(String... urls) {
             // Execute request and wait for response
-             JSONObject response = Client.doGet(urls[0]);
+            JSONObject response = Client.doGet(urls[0]);
             return response;
         }
 
@@ -159,11 +158,20 @@ public class Klio extends Activity {
             JSONArray tracks = null;
             JSONObject track = null;
             HashMap<String, String> map = null;
+            String message = null;
 
             int i;
-            String message;
 
             if (activity != null && !activity.isFinishing()) {
+                if (response == null) {
+                    Toast.makeText(
+                        activity,
+                        activity.getResources().getString(R.string.msg_network_error),
+                        Toast.LENGTH_LONG
+                    ).show();
+                    return;
+                }
+
                 try {
                     tracks = new JSONArray(
                         response.getJSONObject("recenttracks").getString("track")
@@ -205,7 +213,9 @@ public class Klio extends Activity {
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, e.toString());
+                }
 
+                if (tracks == null) {
                     try {
                         message = response.getString("message");
                         Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
